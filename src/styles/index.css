@@ -10,3 +10,9 @@ body,
   height: 100%;
   width: 100%;
 }
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
