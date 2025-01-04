@@ -1,5 +1,6 @@
-import Providers from "./providers";
-import { Router } from "./routes/Router";
+import { Toaster } from "@/components/ui/toaster";
+import Providers from "@/providers";
+import { Router } from "@/routes/Router";
 
 const App = () => {
   return (
@@ -8,6 +9,8 @@ const App = () => {
         App
         <Router />
       </div>
+
+      <Toaster />
     </Providers>
   );
 };

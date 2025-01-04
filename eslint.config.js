@@ -3,6 +3,7 @@ import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
+import testingLib from "eslint-plugin-testing-library";
 
 export default tseslint.config(
   { ignores: ["dist"] },
@@ -17,48 +18,6 @@ export default tseslint.config(
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
     },
-    overrides: [
-      {
-        // Only uses Testing Library lint rules in test files
-        files: [
-          "**/*.spec.ts",
-          "**/*.spec.tsx",
-          "**/*.test.ts",
-          "**/*.test.tsx",
-        ],
-        env: {
-          jest: true,
-        },
-        extends: ["plugin:testing-library/react"],
-        rules: {
-          "testing-library/no-render-in-setup": "off",
-          "testing-library/prefer-presence-queries": "warn",
-          "no-empty-function": "warn",
-          "@typescript-eslint/no-empty-function": "warn",
-          "@typescript-eslint/no-unused-vars": "warn",
-          "import/named": "warn",
-        },
-      },
-
-      // TODO: remove if not needed
-      // {
-      //   files: ["*.ts", "*.tsx"],
-      //   rules: {
-      //     "no-undef": "off",
-      //   },
-      // },
-      // {
-      //   files: [
-      //     "**/*.stories.tsx",
-      //     "**/*.stories.ts",
-      //     "**/*.story.tsx",
-      //     "**/*.story.ts",
-      //   ],
-      //   rules: {
-      //     "import/named": "off",
-      //   },
-      // },
-    ],
 
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -66,6 +25,30 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+        },
+      ],
+      "@typescript-eslint/triple-slash-reference": "off",
+    },
+  },
+  {
+    // Only uses Testing Library lint rules in test files
+    files: ["**/*.spec.ts", "**/*.spec.tsx", "**/*.test.ts", "**/*.test.tsx"],
+    languageOptions: {
+      globals: globals.jest,
+    },
+
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    plugins: { "testing-library": testingLib },
+    rules: {
+      "testing-library/no-render-in-setup": "off",
+      "testing-library/prefer-presence-queries": "warn",
+      "no-empty-function": "warn",
+      "@typescript-eslint/no-empty-function": "warn",
+      "@typescript-eslint/no-unused-vars": "warn",
     },
   }
 );

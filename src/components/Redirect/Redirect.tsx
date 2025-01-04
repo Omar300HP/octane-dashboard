@@ -14,7 +14,7 @@ const Redirect: React.FC<RedirectProps> = ({ to, from }) => {
     if ((from && location.pathname === from) || !from) {
       navigate(to);
     }
-  }, [location]);
+  }, [from, location, navigate, to]);
 
   return null;
 };
