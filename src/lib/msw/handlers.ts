@@ -1,13 +1,40 @@
-import { http, HttpResponse } from "msw";
+import { appConfig } from "@/config";
+import { Order } from "@/services/api";
+import { padLeft } from "@/utils";
+import { delay, http, HttpResponse } from "msw";
+
+const resolvePath = (path: string): string => `${appConfig.baseUrl}${path}`;
+
+const genRandomFullName = (): string => {
+  const firstNames = ["John", "Jane", "Alice", "Bob", "Charlie", "David"];
+  const lastNames = ["Doe", "Smith", "Johnson", "Brown", "Williams"];
+  const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+  const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+  return `${firstName} ${lastName}`;
+};
 
 export const handlers = [
-  // Intercept "GET https://example.com/user" requests...
-  http.get("https://example.com/user", () => {
-    // ...and respond to them using this JSON response.
-    return HttpResponse.json({
-      id: "c7b3d8e0-5e0b-4b0f-8b3a-3b9f4b3d3b3d",
-      firstName: "John",
-      lastName: "Maverick",
-    });
-  }),
+  http.get(
+    resolvePath(appConfig.restApiPaths.orders.list`${":limit"}${":page"}`),
+    async ({ request }) => {
+      try {
+        const url = new URL(request.url);
+        const limit = parseInt(url.searchParams.get("limit") as string);
+        const page = parseInt(url.searchParams.get("page") as string);
+
+        const orders: Order[] = new Array(limit).fill(null).map((_, index) => ({
+          id: padLeft(page + index + 1),
+          customerName: genRandomFullName(),
+          date: new Date().toISOString(),
+          status: "Pending",
+          totalAmount: 100 * Math.random() * (index + page + 1),
+        }));
+
+        await delay(2000);
+        return HttpResponse.json({ orders, total: orders.length });
+      } catch (error) {
+        return new HttpResponse(JSON.stringify(error), { status: 500 });
+      }
+    }
+  ),
 ];

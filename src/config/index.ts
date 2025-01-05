@@ -8,7 +8,10 @@ const restApiPaths = {
   },
 
   orders: {
-    list: (_: TemplateStringsArray) => "/orders",
+    list: (_: TemplateStringsArray, limit: string, page: string) =>
+      `/orders${page || limit ? "?" : ""}${
+        limit ? "limit=" + limit + "&" : ""
+      }${page ? "page=" + page : ""}`,
     getById: (_: TemplateStringsArray, id: string) => `/orders/${id}`,
     create: (_: TemplateStringsArray) => "/orders",
     update: (_: TemplateStringsArray, id: string) => `/orders/${id}`,
@@ -19,9 +22,11 @@ const restApiPaths = {
 type AppConfigType = {
   baseUrl: string;
   restApiPaths: typeof restApiPaths;
+  useMockData: boolean;
 };
 
 export const appConfig: AppConfigType = {
   baseUrl: import.meta.env.VITE_BASE_URL || "",
   restApiPaths,
+  useMockData: import.meta.env.VITE_USE_MOCK_DATA === "true",
 };
