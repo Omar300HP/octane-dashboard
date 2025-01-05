@@ -1,5 +1,12 @@
+import { OrdersTable } from "@/features/OrdersList";
+
 const Orders = () => {
-  return <div>Orders</div>;
+  return (
+    <main>
+      <h1>Orders</h1>
+      <OrdersTable />
+    </main>
+  );
 };
 
 export default Orders;
