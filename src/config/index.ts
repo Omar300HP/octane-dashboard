@@ -29,7 +29,7 @@ type AppConfigType = {
 };
 
 export const appConfig: AppConfigType = {
-  baseUrl: import.meta.env.VITE_BASE_URL || "",
+  baseUrl: import.meta.env.VITE_BASE_URL || window.location.origin,
   restApiPaths,
   useMockData: import.meta.env.VITE_USE_MOCK_DATA === "true",
 };
