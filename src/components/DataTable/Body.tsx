@@ -73,7 +73,10 @@ const Body = <TData,>({
                           <div className="font-bold text-gray-800">
                             {header}
                           </div>
-                          <div className="text-gray-600">
+                          <div
+                            className="text-gray-600"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()

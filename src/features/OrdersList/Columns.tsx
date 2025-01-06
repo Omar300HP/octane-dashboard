@@ -28,11 +28,7 @@ export const columns: ColumnDef<Order>[] = [
     cell: ({ row }) => {
       const status = (row.getValue("status") || "Pending") as OrderStatus;
       const order = row.original;
-      return (
-        <div onClick={(e) => e.stopPropagation()}>
-          <StatusSelect status={status} order={order} />
-        </div>
-      );
+      return <StatusSelect status={status} order={order} />;
     },
   },
   {
