@@ -2,6 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { Order, OrderStatus } from "@/services/api";
 import { formatDate, formatToCurrency } from "@/utils";
 import { StatusSelect } from "./StatusSelect";
+import { DeleteBtn } from "./DeleteBtn";
 
 export const columns: ColumnDef<Order>[] = [
   {
@@ -32,6 +33,14 @@ export const columns: ColumnDef<Order>[] = [
     cell: ({ row }) => {
       const totalAmount = row.getValue("totalAmount") as number | undefined;
       return totalAmount ? formatToCurrency(totalAmount) : "";
+    },
+  },
+  {
+    header: "",
+    accessorKey: "id",
+    cell: ({ row }) => {
+      const orderId = row.getValue("id") as string;
+      return <DeleteBtn orderId={orderId} />;
     },
   },
 ];

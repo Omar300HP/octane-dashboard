@@ -40,10 +40,31 @@ export const orderExtendedApi = baseApi.injectEndpoints({
       query: (params: DeleteOrderReqParams) =>
         queryDefinitions.deleteOrder(params),
 
-      invalidatesTags: (_, error, params) =>
-        error
-          ? []
-          : [{ type: "orders" }, { type: "order", id: params.orderId }],
+      async onQueryStarted({ orderId }, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            orderExtendedApi.util.updateQueryData(
+              "getOrderList",
+              { page: 0, limit: 100 },
+              (draft: GetOrderListRes) => {
+                const orderIndex = draft.orders.findIndex(
+                  (order) => order.id === orderId
+                );
+
+                if (orderIndex >= 0) {
+                  Object.assign(
+                    draft.orders,
+                    draft.orders.splice(orderIndex, 1)
+                  );
+                }
+              }
+            )
+          );
+        } catch (error) {
+          console.error("Failed to delete order:", error);
+        }
+      },
     }),
 
     updateOrder: builder.mutation<
@@ -64,7 +85,6 @@ export const orderExtendedApi = baseApi.injectEndpoints({
                 const orderIndex = draft.orders.findIndex(
                   (order) => order.id === updatedOrder.id
                 );
-                console.log({ orderIndex, updatedOrder, draft });
                 if (orderIndex >= 0) {
                   Object.assign(draft.orders[orderIndex], updatedOrder);
                 }

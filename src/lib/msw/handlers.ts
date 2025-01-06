@@ -13,9 +13,6 @@ const genRandomFullName = (): string => {
   return `${firstName} ${lastName}`;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-var
-var allOrders: Order[] = [];
-
 export const handlers = [
   http.all("*", async () => {
     await delay(100);
@@ -36,7 +33,6 @@ export const handlers = [
           status: "Pending",
           totalAmount: 100 * Math.random() * (index + page + 1),
         }));
-        allOrders = orders;
         return HttpResponse.json({ orders, total: orders.length });
       } catch (error) {
         return new HttpResponse(JSON.stringify(error), { status: 500 });
@@ -50,9 +46,19 @@ export const handlers = [
       try {
         const body = await request.json();
         const { id, ...order } = body as Order;
-        const index = allOrders.findIndex((o) => o.id === id);
-        allOrders[index] = { id, ...order };
         return HttpResponse.json({ id, ...order });
+      } catch (error) {
+        return new HttpResponse(JSON.stringify(error), { status: 500 });
+      }
+    }
+  ),
+
+  http.delete(
+    resolvePath(appConfig.restApiPaths.orders.update`${":id"}`),
+    async ({ params }) => {
+      try {
+        const { id } = params;
+        return HttpResponse.json({ id });
       } catch (error) {
         return new HttpResponse(JSON.stringify(error), { status: 500 });
       }
