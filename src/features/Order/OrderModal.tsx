@@ -50,6 +50,7 @@ const OrderModal: React.FC = () => {
           <DialogDescription className="flex justify-center items-center">
             {!isLoading && data ? (
               <div className="flex flex-col  items-center justify-center">
+                {/* TODO use the status select here */}
                 <DataDisplay label="Order Status" value={data.status} />
                 <DataDisplay label="Customer Name" value={data.customerName} />
                 <DataDisplay

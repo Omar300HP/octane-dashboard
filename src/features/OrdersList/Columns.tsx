@@ -1,8 +1,12 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Order, OrderStatus } from "@/services/api";
+import {
+  useDeleteOrderMutation,
+  type Order,
+  type OrderStatus,
+} from "@/services/api";
 import { formatDate, formatToCurrency } from "@/utils";
 import { StatusSelect } from "@/features/common";
-import { DeleteBtn } from "./DeleteBtn";
+import { DeleteBtn } from "../common/DeleteBtn";
 
 export const columns: ColumnDef<Order>[] = [
   {
@@ -48,11 +52,12 @@ export const columns: ColumnDef<Order>[] = [
 
       return (
         <DeleteBtn
-          orderId={orderId}
+          id={orderId}
           isLastRow={isLastRow}
           isLastPage={isLastPage}
           previousPage={table.previousPage}
           lastPage={table.getPageCount()}
+          useMutation={useDeleteOrderMutation}
         />
       );
     },

@@ -1,29 +1,33 @@
 import { Button } from "@/components/ui/button";
-import { useDeleteOrderMutation } from "@/services/api";
+import { useDeleteOrderMutation, useDeleteUserMutation } from "@/services/api";
 import { Loader, Trash2 } from "lucide-react";
 
 type DeleteBtnProps = {
-  orderId: string;
+  id: string;
   isLastRow: boolean;
   isLastPage: boolean;
   previousPage: () => void;
   lastPage: number;
+  useMutation: typeof useDeleteOrderMutation | typeof useDeleteUserMutation;
 };
 
 const DeleteBtn: React.FC<DeleteBtnProps> = ({
-  orderId,
+  id,
   isLastRow,
   isLastPage,
   previousPage,
+  useMutation,
 }) => {
-  const [mutation, { isLoading }] = useDeleteOrderMutation();
+  const [mutation, { isLoading }] = useMutation();
 
   return (
     <Button
-      onClick={async () => {
+      onClick={async (e) => {
+        e.stopPropagation();
+        e.preventDefault();
         try {
           const shouldBack = isLastRow && isLastPage;
-          mutation({ orderId }).unwrap();
+          mutation({ id }).unwrap();
 
           if (shouldBack) {
             previousPage();

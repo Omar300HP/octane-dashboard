@@ -40,8 +40,8 @@ export const orderExtendedApi = baseApi.injectEndpoints({
       query: (params: DeleteOrderReqParams) =>
         queryDefinitions.deleteOrder(params),
 
-      invalidatesTags: (_, error, { orderId }) =>
-        error ? [] : [{ type: "orders" }, { type: "order", id: orderId }],
+      invalidatesTags: (_, error, { id }) =>
+        error ? [] : [{ type: "orders" }, { type: "order", id }],
     }),
 
     updateOrder: builder.mutation<

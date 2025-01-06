@@ -1,6 +1,9 @@
 const restApiPaths = {
   users: {
-    list: (_: TemplateStringsArray) => "/users",
+    list: (_: TemplateStringsArray, limit: string, page: string) =>
+      `/users${page || limit ? "?" : ""}${limit ? "limit=" + limit + "&" : ""}${
+        page ? "page=" + page : ""
+      }`,
     getById: (_: TemplateStringsArray, id: string) => `/users/${id}`,
     create: (_: TemplateStringsArray) => "/users",
     update: (_: TemplateStringsArray, id: string) => `/users/${id}`,
