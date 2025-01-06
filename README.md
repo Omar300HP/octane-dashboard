@@ -1,50 +1,78 @@
-# React + TypeScript + Vite
+# Octane Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Octane Dashboard is a responsive web application designed to enhance internal operations by providing efficient order management and user administration tools. The project features dynamic tables and card-based layouts for mobile views, leveraging modern technologies and design principles.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **Orders Overview Screen**:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+  - View and manage customer orders.
+  - Actions include viewing details, updating statuses, and deleting orders.
+  - Pagination for efficient data browsing.
 
-- Configure the top-level `parserOptions` property like this:
+- **User Management Screen**:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+  - Manage user accounts.
+  - Actions include editing details, activating/deactivating accounts, and deleting users.
+
+- **Reusable Components**:
+
+  - Generic table component with dynamic columns and customizable actions.
+  - Card layout for mobile responsiveness.
+
+- **Modern Tech Stack**:
+  - Built with React, TypeScript, and Tailwind CSS.
+  - State management via Redux Toolkit.
+  - Mocked API data using MSW.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- **Node.js**: v18 or later
+- **Yarn**: v1.22 or later
+
+---
+
+To be more organized I broke down the task to smaller tasks and created a project board on GitHub. You can find it [here](https://github.com/users/Omar300HP/projects/3/views/1)
+
+---
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/octane-dashboard.git
+   cd octane-dashboard
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   yarn install
+   ```
+
+3. Start the development server:
+
+   ```bash
+    yarn start
+   ```
+
+4. Open the application in your browser:
+
+   ```bash
+   yarn dev
+   ```
+
+Access the application at the following URL:
+
+```bash
+http://localhost:3000
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+---
