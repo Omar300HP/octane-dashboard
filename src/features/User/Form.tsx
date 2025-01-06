@@ -46,81 +46,119 @@ const UserForm = ({ initialValues }: UserFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="username..." {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form
+        onSubmit={onSubmit}
+        className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-sm"
+      >
+        <div className="grid grid-cols-2 gap-6">
+          <div className="col-span-2">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem className="w-[200px] md:w-[300px]">
+                  <FormLabel className="font-medium flex justify-start">
+                    Username
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="username..."
+                      {...field}
+                      className="w-full"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-sm text-gray-500 flex justify-start">
+                    This is your public display name.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="email..." {...field} />
-              </FormControl>
-              <FormDescription>This is your email address.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <div className="col-span-2">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="w-[200px] md:w-[80%]">
+                  <FormLabel className="font-medium flex justify-start">
+                    Email
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="email..."
+                      {...field}
+                      className="w-full"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-sm text-gray-500 flex justify-start">
+                    This is your email address.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <FormField
-          control={form.control}
-          name="role"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Role</FormLabel>
-              <FormControl>
-                <Select
-                  options={rolesOptions}
-                  placeholder="role..."
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>This is your role.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <div className="col-span-2">
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem className="w-[200px] md:w-[80%]">
+                  <FormLabel className="font-medium flex justify-start">
+                    Role
+                  </FormLabel>
+                  <FormControl>
+                    <Select
+                      options={rolesOptions}
+                      placeholder="role..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-sm text-gray-500 flex justify-start">
+                    This is your role.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <FormField
-          control={form.control}
-          name="isActive"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <div className="flex justify-start items-center space-x-2">
-                  <Switch
-                    checked={field.value}
-                    onChange={field.onChange}
-                    name={field.name}
-                  />
-                  <Label>{field.value ? "Active" : "Inactive"}</Label>
-                </div>
-              </FormControl>
-              <FormDescription>This is your account status.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button disabled={isLoading} type="submit">
-          Submit
-        </Button>
+          <div className="col-span-2">
+            <FormField
+              control={form.control}
+              name="isActive"
+              render={({ field }) => (
+                <FormItem className="h-full flex flex-col justify-center">
+                  <FormControl>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        checked={field.value}
+                        onChange={field.onChange}
+                        name={field.name}
+                      />
+                      <Label className="font-medium">
+                        {field.value ? "Active" : "Inactive"}
+                      </Label>
+                    </div>
+                  </FormControl>
+                  <FormDescription className="text-sm text-gray-500 flex justify-start">
+                    This is your account status.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-center">
+          <Button disabled={isLoading} type="submit" className="min-w-[120px]">
+            Submit
+          </Button>
+        </div>
       </form>
     </Form>
   );
