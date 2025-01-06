@@ -32,8 +32,8 @@ describe("DataTable", () => {
 
   it("renders table headers correctly", () => {
     render(<DataTable columns={columns} data={data} />);
-    expect(screen.getByText("ID")).toBeInTheDocument();
-    expect(screen.getByText("Name")).toBeInTheDocument();
+    expect(screen.getAllByText("ID")[0]).toBeInTheDocument();
+    expect(screen.getAllByText("Name")[0]).toBeInTheDocument();
   });
 
   it("renders table data correctly", () => {

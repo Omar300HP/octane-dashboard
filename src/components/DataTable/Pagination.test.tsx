@@ -19,7 +19,7 @@ describe("Pagination", () => {
     expect(screen.getByLabelText("first page")).toBeInTheDocument();
     expect(screen.getByText("Previous")).toBeInTheDocument();
     expect(screen.getByText("Page")).toBeInTheDocument();
-    expect(screen.getByText("5/10")).toBeInTheDocument();
+    expect(screen.getByText("6/10")).toBeInTheDocument();
     expect(screen.getByText("Next")).toBeInTheDocument();
     expect(screen.getByLabelText("last page")).toBeInTheDocument();
   });

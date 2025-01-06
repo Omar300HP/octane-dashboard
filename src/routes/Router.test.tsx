@@ -1,13 +1,25 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Router } from "./Router";
+import { Outlet } from "react-router-dom";
 
 vi.mock("./orders", () => ({
-  Orders: () => <div>Orders Page</div>,
+  Orders: () => (
+    <div>
+      Orders Page
+      <Outlet />
+    </div>
+  ),
+  Order: () => <div>Order Page</div>,
 }));
 
 vi.mock("./users", () => ({
-  Users: () => <div>Users Page</div>,
+  Users: () => (
+    <div>
+      Users Page <Outlet />
+    </div>
+  ),
+  User: () => <div>User Page</div>,
 }));
 
 vi.mock("@/components/Redirect", () => ({
@@ -31,5 +43,17 @@ describe("Router", () => {
     window.history.pushState({}, "", "/");
     render(<Router />);
     expect(screen.getByText("Redirecting to /orders")).toBeInTheDocument();
+  });
+
+  it("renders User component at /users/id route", () => {
+    window.history.pushState({}, "", "/users/id");
+    render(<Router />);
+    expect(screen.getByText("User Page")).toBeInTheDocument();
+  });
+
+  it("renders Order component at /orders/id route", () => {
+    window.history.pushState({}, "", "/orders/id");
+    render(<Router />);
+    expect(screen.getByText("Order Page")).toBeInTheDocument();
   });
 });
