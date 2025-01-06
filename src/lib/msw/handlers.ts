@@ -4,7 +4,7 @@ import { usersHandlers } from "./users";
 
 export const handlers = [
   http.all("*", async () => {
-    await delay(200);
+    await delay(1000);
   }),
   ...ordersHandlers,
   ...usersHandlers,

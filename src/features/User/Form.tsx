@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { User, useUpdateUserMutation } from "@/services/api";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,12 +19,15 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/Select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { routes } from "@/routes/paths";
+import { Loader } from "lucide-react";
 
 type UserFormProps = {
   initialValues: User;
 };
 
 const UserForm = ({ initialValues }: UserFormProps) => {
+  const navigate = useNavigate();
   const [mutation, { isLoading, data }] = useUpdateUserMutation();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -39,6 +43,7 @@ const UserForm = ({ initialValues }: UserFormProps) => {
           id: initialValues.id,
         },
       }).unwrap();
+      navigate(routes.users``);
     } catch (error) {
       console.error("Failed to update user:", error);
     }
@@ -133,10 +138,10 @@ const UserForm = ({ initialValues }: UserFormProps) => {
               render={({ field }) => (
                 <FormItem className="h-full flex flex-col justify-center">
                   <FormControl>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                       <Switch
                         checked={field.value}
-                        onChange={field.onChange}
+                        onCheckedChange={field.onChange}
                         name={field.name}
                       />
                       <Label className="font-medium">
@@ -155,8 +160,16 @@ const UserForm = ({ initialValues }: UserFormProps) => {
         </div>
 
         <div className="mt-6 flex justify-center">
-          <Button disabled={isLoading} type="submit" className="min-w-[120px]">
-            Submit
+          <Button
+            disabled={isLoading || !form.formState.isDirty}
+            type="submit"
+            className="min-w-[120px]"
+          >
+            {isLoading ? (
+              <Loader className="h-4 w-4 animate-spin duration-[infinity]" />
+            ) : (
+              "Submit"
+            )}
           </Button>
         </div>
       </form>
