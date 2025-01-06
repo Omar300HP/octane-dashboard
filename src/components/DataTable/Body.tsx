@@ -61,22 +61,27 @@ const Body = <TData,>({
                   }}
                 >
                   <CardContent className="py-8 flex flex-col justify-start items-start gap-y-3">
-                    {row.getVisibleCells().map((cell) => (
-                      <div
-                        key={"cell" + cell.id}
-                        className="flex flex-row w-full justify-between items-center  gap-x-5"
-                      >
-                        <div className="font-bold text-gray-800">
-                          {String(cell.column.columnDef.header) + ":"}
+                    {row.getVisibleCells().map((cell) => {
+                      let header = String(cell.column.columnDef.header);
+                      header += header ? ":" : "";
+
+                      return (
+                        <div
+                          key={"cell" + cell.id}
+                          className="flex flex-row w-full justify-between items-center  gap-x-5"
+                        >
+                          <div className="font-bold text-gray-800">
+                            {header}
+                          </div>
+                          <div className="text-gray-600">
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
                         </div>
-                        <div className="text-gray-600">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </CardContent>
                 </Card>
               ) : null}
