@@ -23,9 +23,7 @@ export type CreateOrderReq = {
   totalAmount: number;
 };
 
-export type CreateOrderRes = {
-  order: Order;
-};
+export type CreateOrderRes = Order;
 
 export type GetOrderReqParams = {
   orderId: string;
@@ -38,3 +36,11 @@ export type DeleteOrderReqParams = {
 };
 
 export type DeleteOrderRes = void;
+
+export type UpdateOrderReqParams = {
+  id: string;
+};
+
+export type UpdateOrderReqBody = Order;
+
+export type UpdateOrderRes = Order;

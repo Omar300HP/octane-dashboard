@@ -13,7 +13,14 @@ const genRandomFullName = (): string => {
   return `${firstName} ${lastName}`;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-var
+var allOrders: Order[] = [];
+
 export const handlers = [
+  http.all("*", async () => {
+    await delay(100);
+  }),
+
   http.get(
     resolvePath(appConfig.restApiPaths.orders.list`${":limit"}${":page"}`),
     async ({ request }) => {
@@ -29,9 +36,23 @@ export const handlers = [
           status: "Pending",
           totalAmount: 100 * Math.random() * (index + page + 1),
         }));
-
-        await delay(2000);
+        allOrders = orders;
         return HttpResponse.json({ orders, total: orders.length });
+      } catch (error) {
+        return new HttpResponse(JSON.stringify(error), { status: 500 });
+      }
+    }
+  ),
+
+  http.put(
+    resolvePath(appConfig.restApiPaths.orders.update`${":id"}`),
+    async ({ request }) => {
+      try {
+        const body = await request.json();
+        const { id, ...order } = body as Order;
+        const index = allOrders.findIndex((o) => o.id === id);
+        allOrders[index] = { id, ...order };
+        return HttpResponse.json({ id, ...order });
       } catch (error) {
         return new HttpResponse(JSON.stringify(error), { status: 500 });
       }

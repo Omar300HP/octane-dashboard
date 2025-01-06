@@ -40,6 +40,7 @@ export function DataTable<TData, TValue>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex: false,
   });
 
   const [_selectedRow, setSelectedRow] = useState("");
@@ -65,7 +66,7 @@ export function DataTable<TData, TValue>({
           isNextDisabled={!table.getCanNextPage()}
           isPreviousDisabled={!table.getCanPreviousPage()}
           pageCount={table.getPageCount()}
-          pageIndex={table.getState().pagination.pageIndex + 1}
+          pageIndex={table.getState().pagination.pageIndex}
           previousPage={table.previousPage}
           nextPage={table.nextPage}
           setPageIndex={table.setPageIndex}

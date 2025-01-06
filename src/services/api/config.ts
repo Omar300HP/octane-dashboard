@@ -34,4 +34,9 @@ export const queryDefinitions = {
     url: appConfig.restApiPaths.orders.delete`${params.orderId}`,
     method: RequestMethods.DELETE,
   }),
+  updateOrder: (reqBody: ApiCallTypes.UpdateOrderReqBody) => ({
+    url: appConfig.restApiPaths.orders.update`${reqBody.id}`,
+    method: RequestMethods.PUT,
+    data: reqBody,
+  }),
 } as const;

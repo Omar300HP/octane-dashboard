@@ -9,6 +9,9 @@ import {
   GetOrderReqParams,
   DeleteOrderReqParams,
   DeleteOrderRes,
+  UpdateOrderRes,
+  UpdateOrderReqBody,
+  UpdateOrderReqParams,
 } from "../request_response";
 
 export const orderExtendedApi = baseApi.injectEndpoints({
@@ -37,7 +40,41 @@ export const orderExtendedApi = baseApi.injectEndpoints({
       query: (params: DeleteOrderReqParams) =>
         queryDefinitions.deleteOrder(params),
 
-      invalidatesTags: (_, error) => (error ? [] : [{ type: "orders" }]),
+      invalidatesTags: (_, error, params) =>
+        error
+          ? []
+          : [{ type: "orders" }, { type: "order", id: params.orderId }],
+    }),
+
+    updateOrder: builder.mutation<
+      UpdateOrderRes,
+      { reqBody: UpdateOrderReqBody; params: UpdateOrderReqParams }
+    >({
+      query: ({ reqBody }: { reqBody: UpdateOrderReqBody }) =>
+        queryDefinitions.updateOrder(reqBody),
+
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data: updatedOrder } = await queryFulfilled;
+          dispatch(
+            orderExtendedApi.util.updateQueryData(
+              "getOrderList",
+              { page: 0, limit: 100 },
+              (draft: GetOrderListRes) => {
+                const orderIndex = draft.orders.findIndex(
+                  (order) => order.id === updatedOrder.id
+                );
+                console.log({ orderIndex, updatedOrder, draft });
+                if (orderIndex >= 0) {
+                  Object.assign(draft.orders[orderIndex], updatedOrder);
+                }
+              }
+            )
+          );
+        } catch (error) {
+          console.error("Failed to update order:", error);
+        }
+      },
     }),
   }),
 
@@ -49,4 +86,5 @@ export const {
   useCreateOrderMutation,
   useGetOrderByIdQuery,
   useDeleteOrderMutation,
+  useUpdateOrderMutation,
 } = orderExtendedApi;

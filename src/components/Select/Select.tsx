@@ -5,6 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Loader } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
 type SelectProps = {
@@ -16,6 +17,7 @@ type SelectProps = {
   value?: string;
   placeholder?: string;
   onChange?: (value: string) => void;
+  isLoading?: boolean;
 };
 
 const CustomSelect: React.FC<SelectProps> = ({
@@ -24,18 +26,29 @@ const CustomSelect: React.FC<SelectProps> = ({
   value,
   placeholder,
   onChange,
+  isLoading = false,
 }) => {
   return (
-    <Select value={value} onValueChange={onChange}>
+    <Select
+      value={isLoading ? "loading" : value}
+      onValueChange={onChange}
+      disabled={isLoading}
+    >
       <SelectTrigger className={twMerge("w-[180px]", className)}>
-        <SelectValue placeholder={placeholder} />
+        <SelectValue placeholder={isLoading ? "Loading..." : placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
-            {option.label}
+        {isLoading ? (
+          <SelectItem value="loading" disabled>
+            <Loader className="h-3 w-3 animate-spin duration-[infinity]" />
           </SelectItem>
-        ))}
+        ) : (
+          options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))
+        )}
       </SelectContent>
     </Select>
   );

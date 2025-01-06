@@ -1,26 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Order, OrderStatus } from "@/services/api";
 import { formatDate, formatToCurrency } from "@/utils";
-import { Select } from "@/components/Select";
-
-const StatusOptions: { value: OrderStatus; label: OrderStatus }[] = [
-  {
-    value: "Pending",
-    label: "Pending",
-  },
-  {
-    value: "Shipped",
-    label: "Shipped",
-  },
-  {
-    value: "Delivered",
-    label: "Delivered",
-  },
-  {
-    value: "Cancelled",
-    label: "Cancelled",
-  },
-];
+import { StatusSelect } from "./StatusSelect";
 
 export const columns: ColumnDef<Order>[] = [
   {
@@ -40,14 +21,9 @@ export const columns: ColumnDef<Order>[] = [
     header: "Status",
     accessorKey: "status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as string | undefined;
-      return (
-        <Select
-          options={StatusOptions}
-          value={status}
-          className="w-[100px] md:w-[180px]"
-        />
-      );
+      const status = (row.getValue("status") || "Pending") as OrderStatus;
+      const order = row.original;
+      return <StatusSelect status={status} order={order} />;
     },
   },
   {

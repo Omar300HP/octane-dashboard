@@ -30,7 +30,9 @@ const Pagination: React.FC<PaginationProps> = ({
       <Button
         variant="outline"
         size="sm"
-        onClick={() => setPageIndex(0)}
+        onClick={() => {
+          setPageIndex(0);
+        }}
         disabled={isPreviousDisabled}
         aria-label="first page"
       >
@@ -40,7 +42,9 @@ const Pagination: React.FC<PaginationProps> = ({
       <Button
         variant="outline"
         size="sm"
-        onClick={previousPage}
+        onClick={() => {
+          previousPage();
+        }}
         disabled={isPreviousDisabled}
         className="m-0"
       >
@@ -51,12 +55,14 @@ const Pagination: React.FC<PaginationProps> = ({
       </Button>
       <div className="flex items-center gap-1 text-sm xs:text-xs">
         <div className="invisible md:visible md:relative absolute">Page</div>
-        <strong>{`${pageIndex}/${pageCount}`}</strong>
+        <strong>{`${pageIndex + 1}/${pageCount}`}</strong>
       </div>
       <Button
         variant="outline"
         size="sm"
-        onClick={nextPage}
+        onClick={() => {
+          nextPage();
+        }}
         disabled={isNextDisabled}
       >
         <span className="invisible md:visible md:relative absolute">Next</span>
@@ -65,7 +71,9 @@ const Pagination: React.FC<PaginationProps> = ({
       <Button
         variant="outline"
         size="sm"
-        onClick={() => setPageIndex(pageCount - 1)}
+        onClick={() => {
+          setPageIndex(pageCount - 1);
+        }}
         disabled={isNextDisabled}
         aria-label="last page"
       >
