@@ -1,6 +1,8 @@
 import { DataTable } from "@/components/DataTable";
 import { useGetOrderListQuery } from "@/services/api";
 import { columns } from "./Columns";
+import { useNavigate } from "react-router-dom";
+import { routes } from "@/routes/paths";
 
 const OrdersTable = () => {
   const { data } = useGetOrderListQuery({
@@ -8,14 +10,17 @@ const OrdersTable = () => {
     page: 0,
   });
 
-  console.log({
-    data,
-  });
+  const navigate = useNavigate();
 
   return (
-    <div className="w-full flex flex-col justify-center items-center px-1 md:px-16">
-      <DataTable columns={columns} data={data?.orders ?? []} rowKey={"id"} />
-    </div>
+    <DataTable
+      onRowClick={(id) => {
+        navigate(routes.orderPage`${id}`);
+      }}
+      columns={columns}
+      data={data?.orders ?? []}
+      rowKey={"id"}
+    />
   );
 };
 

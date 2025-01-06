@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Order, OrderStatus } from "@/services/api";
 import { formatDate, formatToCurrency } from "@/utils";
-import { StatusSelect } from "./StatusSelect";
+import { StatusSelect } from "@/features/common";
 import { DeleteBtn } from "./DeleteBtn";
 
 export const columns: ColumnDef<Order>[] = [
