@@ -47,7 +47,7 @@ To be more organized I broke down the task to smaller tasks and created a projec
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/octane-dashboard.git
+   git clone https://github.com/Omar300HP/octane-dashboard.git
    cd octane-dashboard
    ```
 
