@@ -1,9 +1,11 @@
-import { RowModel } from "@tanstack/react-table";
+import type { Row, RowModel } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
-
-import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { twJoin } from "tailwind-merge";
+import { Card, CardContent } from "@/components/ui/card";
+import { TableRow, TableCell, TableBody } from "@/components/ui/table";
 import { SearchX } from "lucide-react";
+import { useViewportWidth } from "@/hooks";
+import { Fragment } from "react";
 
 type BodyProps<TData> = {
   rowModels: RowModel<TData>;
@@ -13,6 +15,7 @@ type BodyProps<TData> = {
   setSelectedRow: (id: string) => void;
   columnsLength: number;
 };
+
 const Body = <TData,>({
   rowModels,
   rowSelected,
@@ -21,8 +24,22 @@ const Body = <TData,>({
   setSelectedRow,
   columnsLength,
 }: BodyProps<TData>) => {
+  const { isSmall } = useViewportWidth();
+
+  const Wrapper = isSmall ? Fragment : TableBody;
+
+  const handleRowClick = (row: Row<TData>) => {
+    const id = String(rowKey ? String(row.original[rowKey]) : row.id);
+
+    if (onRowClick) {
+      onRowClick(id, row.original);
+    }
+
+    setSelectedRow(id);
+  };
+
   return (
-    <TableBody>
+    <Wrapper>
       {rowModels.rows?.length ? (
         rowModels.rows.map((row) => {
           const isSelected = rowKey
@@ -31,32 +48,58 @@ const Body = <TData,>({
             : String(rowSelected) === String(row.id);
 
           return (
-            <TableRow
-              key={row.id}
-              data-state={isSelected && "selected"}
-              onClick={() => {
-                const id = rowKey ? String(row.original[rowKey]) : row.id;
+            <Fragment key={row.id}>
+              {/* Mobile View: Card Layout */}
+              {isSmall ? (
+                <Card
+                  className={twJoin(
+                    "block md:hidden mb-4 shadow-sm border",
+                    isSelected ? "bg-gray-100" : "bg-white"
+                  )}
+                  onClick={() => {
+                    handleRowClick(row);
+                  }}
+                >
+                  <CardContent className="py-8 flex flex-col justify-start items-start gap-y-3">
+                    {row.getVisibleCells().map((cell) => (
+                      <div
+                        key={cell.id}
+                        className="flex flex-row w-full justify-between items-center  gap-x-5"
+                      >
+                        <div className="font-bold text-gray-800">
+                          {String(cell.column.columnDef.header) + ":"}
+                        </div>
+                        <div className="text-gray-600">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              ) : null}
 
-                if (onRowClick) {
-                  onRowClick(id, row.original);
-                }
-
-                setSelectedRow(String(id));
-              }}
-              className={twJoin(
-                "cursor-pointer",
-                isSelected ? "bg-gray-100" : null
-              )}
-              data-testid={"table-row"}
-              aria-selected={isSelected}
-              role="row"
-            >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
+              {/* Desktop View: Table Row Layout */}
+              <TableRow
+                key={row.id}
+                className={twJoin(
+                  "hidden md:table-row",
+                  isSelected ? "bg-gray-100" : "bg-white"
+                )}
+                onClick={() => {
+                  handleRowClick(row);
+                }}
+                aria-selected={isSelected}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </Fragment>
           );
         })
       ) : (
@@ -69,7 +112,8 @@ const Body = <TData,>({
           </TableCell>
         </TableRow>
       )}
-    </TableBody>
+    </Wrapper>
   );
 };
+
 export { Body };

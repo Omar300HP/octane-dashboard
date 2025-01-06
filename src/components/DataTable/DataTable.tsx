@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Pagination } from "./Pagination";
 import { Header } from "./Header";
 import { Body } from "./Body";
+import { useViewportWidth } from "@/hooks";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -43,11 +44,13 @@ export function DataTable<TData, TValue>({
 
   const [_selectedRow, setSelectedRow] = useState("");
 
+  const { isSmall } = useViewportWidth();
+
   return (
     <div className={twMerge("w-full", containerClassName)}>
       <div className="rounded-md border">
         <Table>
-          <Header headerGroups={table.getHeaderGroups()} />
+          {isSmall ? null : <Header headerGroups={table.getHeaderGroups()} />}
           <Body
             columnsLength={columns.length}
             rowModels={table.getRowModel()}

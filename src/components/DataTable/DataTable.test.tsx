@@ -9,6 +9,10 @@ interface TestData {
   name: string;
 }
 
+vi.mock("@/hooks", () => ({
+  useViewportWidth: vi.fn(() => ({ isSmall: false, width: 100 })),
+}));
+
 describe("DataTable", () => {
   const columns: ColumnDef<TestData>[] = [
     {
@@ -59,7 +63,7 @@ describe("DataTable", () => {
     expect(screen.getByText("Previous")).toBeInTheDocument();
     expect(screen.getByText("Next")).toBeInTheDocument();
     expect(screen.getByText("Page")).toBeInTheDocument();
-    expect(screen.getByText("1 of 1")).toBeInTheDocument();
+    expect(screen.getByText("1/1")).toBeInTheDocument();
   });
 
   it("disables pagination buttons when on first/only page", () => {
@@ -77,7 +81,7 @@ describe("DataTable", () => {
     }));
 
     render(<DataTable columns={columns} data={manyItems} />);
-    expect(screen.getByText("1 of 2")).toBeInTheDocument();
+    expect(screen.getByText("1/2")).toBeInTheDocument();
 
     const nextButton = screen.getByText("Next").closest("button");
     expect(nextButton).not.toBeDisabled();
@@ -90,13 +94,13 @@ describe("DataTable", () => {
     }));
 
     render(<DataTable columns={columns} data={manyItems} />);
-    expect(screen.getByText("1 of 2")).toBeInTheDocument();
+    expect(screen.getByText("1/2")).toBeInTheDocument();
 
     const nextButton = screen.getByText("Next").closest("button");
     nextButton?.click();
 
     await waitFor(() => {
-      expect(screen.getByText("2 of 2")).toBeInTheDocument();
+      expect(screen.getByText("2/2")).toBeInTheDocument();
     });
   });
 
@@ -134,19 +138,19 @@ describe("DataTable", () => {
 
     render(<DataTable columns={columns} data={manyItems} />);
 
-    expect(screen.getByText("1 of 3")).toBeInTheDocument();
+    expect(screen.getByText("1/3")).toBeInTheDocument();
     expect(screen.getByText("Test 1")).toBeInTheDocument();
 
     const nextButton = screen.getByText("Next").closest("button");
     nextButton?.click();
     await waitFor(() => {
-      expect(screen.getByText("2 of 3")).toBeInTheDocument();
+      expect(screen.getByText("2/3")).toBeInTheDocument();
     });
     expect(screen.getByText("Test 11")).toBeInTheDocument();
 
     nextButton?.click();
     await waitFor(() => {
-      expect(screen.getByText("3 of 3")).toBeInTheDocument();
+      expect(screen.getByText("3/3")).toBeInTheDocument();
     });
     expect(screen.getByText("Test 21")).toBeInTheDocument();
   });
@@ -164,7 +168,7 @@ describe("DataTable", () => {
     });
     lastPageButton.click();
     await waitFor(() => {
-      expect(screen.getByText("3 of 3")).toBeInTheDocument();
+      expect(screen.getByText("3/3")).toBeInTheDocument();
     });
 
     expect(screen.getByText("Test 21")).toBeInTheDocument();
@@ -175,7 +179,7 @@ describe("DataTable", () => {
     firstPageButton.click();
 
     await waitFor(() => {
-      expect(screen.getByText("1 of 3")).toBeInTheDocument();
+      expect(screen.getByText("1/3")).toBeInTheDocument();
     });
     expect(screen.getByText("Test 1")).toBeInTheDocument();
   });
@@ -278,7 +282,7 @@ describe("DataTable", () => {
     nextButton?.click();
 
     await waitFor(() => {
-      expect(screen.getByText("2 of 2")).toBeInTheDocument();
+      expect(screen.getByText("2/2")).toBeInTheDocument();
     });
 
     const newFirstRow = screen.getByText("Test 11").closest("tr");

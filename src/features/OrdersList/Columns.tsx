@@ -41,7 +41,13 @@ export const columns: ColumnDef<Order>[] = [
     accessorKey: "status",
     cell: ({ row }) => {
       const status = row.getValue("status") as string | undefined;
-      return <Select options={StatusOptions} value={status} />;
+      return (
+        <Select
+          options={StatusOptions}
+          value={status}
+          className="w-[100px] md:w-[180px]"
+        />
+      );
     },
   },
   {
