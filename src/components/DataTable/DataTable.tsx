@@ -41,6 +41,7 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     autoResetPageIndex: false,
+    rowCount: data.length,
   });
 
   const [_selectedRow, setSelectedRow] = useState("");

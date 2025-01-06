@@ -38,9 +38,23 @@ export const columns: ColumnDef<Order>[] = [
   {
     header: "",
     accessorKey: "id",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const orderId = row.getValue("id") as string;
-      return <DeleteBtn orderId={orderId} />;
+      const isLastRow =
+        row.index === table.getRowCount() - 1 &&
+        table.getRowModel().rows.length === 1;
+      const isLastPage =
+        table.getPageCount() === table.getState().pagination.pageIndex + 1;
+
+      return (
+        <DeleteBtn
+          orderId={orderId}
+          isLastRow={isLastRow}
+          isLastPage={isLastPage}
+          previousPage={table.previousPage}
+          lastPage={table.getPageCount()}
+        />
+      );
     },
   },
 ];

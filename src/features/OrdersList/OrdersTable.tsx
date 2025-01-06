@@ -8,6 +8,10 @@ const OrdersTable = () => {
     page: 0,
   });
 
+  console.log({
+    data,
+  });
+
   return (
     <div className="w-full flex flex-col justify-center items-center px-1 md:px-16">
       <DataTable columns={columns} data={data?.orders ?? []} rowKey={"id"} />

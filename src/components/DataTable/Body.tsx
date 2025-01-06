@@ -48,7 +48,7 @@ const Body = <TData,>({
             : String(rowSelected) === String(row.id);
 
           return (
-            <Fragment key={row.id}>
+            <Fragment key={"f" + row.id}>
               {/* Mobile View: Card Layout */}
               {isSmall ? (
                 <Card
@@ -63,7 +63,7 @@ const Body = <TData,>({
                   <CardContent className="py-8 flex flex-col justify-start items-start gap-y-3">
                     {row.getVisibleCells().map((cell) => (
                       <div
-                        key={cell.id}
+                        key={"cell" + cell.id}
                         className="flex flex-row w-full justify-between items-center  gap-x-5"
                       >
                         <div className="font-bold text-gray-800">
@@ -83,7 +83,7 @@ const Body = <TData,>({
 
               {/* Desktop View: Table Row Layout */}
               <TableRow
-                key={row.id}
+                key={"tr" + row.id}
                 className={twJoin(
                   "hidden md:table-row",
                   isSelected ? "bg-gray-100" : "bg-white"
@@ -94,7 +94,7 @@ const Body = <TData,>({
                 aria-selected={isSelected}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={"td" + cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

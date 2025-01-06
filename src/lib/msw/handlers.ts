@@ -3,8 +3,13 @@ import { Order } from "@/services/api";
 import { padLeft } from "@/utils";
 import { delay, http, HttpResponse } from "msw";
 
+// In-memory store to hold order data
+const orderStore: Record<string, Order> = {};
+
+// Helper to resolve path
 const resolvePath = (path: string): string => `${appConfig.baseUrl}${path}`;
 
+// Helper to generate random full names
 const genRandomFullName = (): string => {
   const firstNames = ["John", "Jane", "Alice", "Bob", "Charlie", "David"];
   const lastNames = ["Doe", "Smith", "Johnson", "Brown", "Williams"];
@@ -26,14 +31,45 @@ export const handlers = [
         const limit = parseInt(url.searchParams.get("limit") as string);
         const page = parseInt(url.searchParams.get("page") as string);
 
-        const orders: Order[] = new Array(limit).fill(null).map((_, index) => ({
-          id: padLeft(page + index + 1),
-          customerName: genRandomFullName(),
-          date: new Date().toISOString(),
-          status: "Pending",
-          totalAmount: 100 * Math.random() * (index + page + 1),
-        }));
-        return HttpResponse.json({ orders, total: orders.length });
+        const orders: Order[] = new Array(limit).fill(null).map((_, index) => {
+          const id = padLeft(page + index + 1);
+          if (!orderStore[id]) {
+            orderStore[id] = {
+              id,
+              customerName: genRandomFullName(),
+              date: new Date().toISOString(),
+              status: "Pending",
+              totalAmount: 100 * Math.random() * (index + page + 1),
+            };
+          }
+          return orderStore[id];
+        });
+
+        return HttpResponse.json({
+          orders,
+          total: Object.keys(orderStore).length,
+        });
+      } catch (error) {
+        return new HttpResponse(JSON.stringify(error), { status: 500 });
+      }
+    }
+  ),
+
+  http.get(
+    resolvePath(appConfig.restApiPaths.orders.getById`${":id"}`),
+    async ({ params }) => {
+      try {
+        const id = params.id as string;
+        const order = orderStore[id];
+        if (!order) {
+          return new HttpResponse(
+            JSON.stringify({ error: "Order not found" }),
+            {
+              status: 404,
+            }
+          );
+        }
+        return HttpResponse.json(order);
       } catch (error) {
         return new HttpResponse(JSON.stringify(error), { status: 500 });
       }
@@ -46,7 +82,19 @@ export const handlers = [
       try {
         const body = await request.json();
         const { id, ...order } = body as Order;
-        return HttpResponse.json({ id, ...order });
+
+        if (orderStore[id]) {
+          orderStore[id] = { id, ...order };
+        } else {
+          return new HttpResponse(
+            JSON.stringify({ error: "Order not found" }),
+            {
+              status: 404,
+            }
+          );
+        }
+
+        return HttpResponse.json(orderStore[id]);
       } catch (error) {
         return new HttpResponse(JSON.stringify(error), { status: 500 });
       }
@@ -57,8 +105,14 @@ export const handlers = [
     resolvePath(appConfig.restApiPaths.orders.update`${":id"}`),
     async ({ params }) => {
       try {
-        const { id } = params;
-        return HttpResponse.json({ id });
+        const id = params.id as string;
+        if (id && orderStore[id]) {
+          delete orderStore[id];
+          return HttpResponse.json({ id });
+        }
+        return new HttpResponse(JSON.stringify({ error: "Order not found" }), {
+          status: 404,
+        });
       } catch (error) {
         return new HttpResponse(JSON.stringify(error), { status: 500 });
       }

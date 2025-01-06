@@ -51,11 +51,13 @@ export const orderExtendedApi = baseApi.injectEndpoints({
                 const orderIndex = draft.orders.findIndex(
                   (order) => order.id === orderId
                 );
-
+                console.log({
+                  orderIndex,
+                  filter: draft.orders.filter((order) => order.id !== orderId),
+                });
                 if (orderIndex >= 0) {
-                  Object.assign(
-                    draft.orders,
-                    draft.orders.splice(orderIndex, 1)
+                  draft.orders = draft.orders.filter(
+                    (order) => order.id !== orderId
                   );
                 }
               }
