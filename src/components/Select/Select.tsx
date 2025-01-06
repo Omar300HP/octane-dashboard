@@ -5,10 +5,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SelectProps } from "@radix-ui/react-select";
 import { Loader } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
-type SelectProps = {
+type CustomSelectProps = SelectProps & {
   className?: string;
   options: {
     value: string;
@@ -20,19 +21,21 @@ type SelectProps = {
   isLoading?: boolean;
 };
 
-const CustomSelect: React.FC<SelectProps> = ({
+const CustomSelect: React.FC<CustomSelectProps> = ({
   className,
   options,
   value,
   placeholder,
   onChange,
   isLoading = false,
+  ...props
 }) => {
   return (
     <Select
       value={isLoading ? "loading" : value}
       onValueChange={onChange}
       disabled={isLoading}
+      {...props}
     >
       <SelectTrigger className={twMerge("w-[180px]", className)}>
         <SelectValue placeholder={isLoading ? "Loading..." : placeholder} />

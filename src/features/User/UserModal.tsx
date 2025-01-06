@@ -9,18 +9,7 @@ import { routes } from "@/routes/paths";
 import { useGetUserByIdQuery } from "@/services/api";
 import { Loader } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-
-const DataDisplay: React.FC<{ label: string; value: string }> = ({
-  label,
-  value,
-}) => {
-  return (
-    <div className="flex flex-row w-full justify-between items-center  gap-x-5">
-      <div className="font-bold text-gray-800">{label + ":"}</div>
-      <div className="text-gray-600">{value}</div>
-    </div>
-  );
-};
+import { UserForm } from "./Form";
 
 const UserModal: React.FC = () => {
   const navigate = useNavigate();
@@ -48,15 +37,7 @@ const UserModal: React.FC = () => {
           <DialogTitle>{`User #${userId}`}</DialogTitle>
           <DialogDescription className="flex justify-center items-center">
             {!isLoading && data ? (
-              <div className="flex flex-col  items-center justify-center">
-                <DataDisplay label="Username" value={data.username} />
-                <DataDisplay label="Email" value={data.email} />
-                <DataDisplay label="Role" value={data.role} />
-                <DataDisplay
-                  label="Active"
-                  value={data.isActive ? "Yes" : "No"}
-                />
-              </div>
+              <UserForm initialValues={data} />
             ) : (
               <Loader className="h-10 w-10 animate-spin duration-[infinity]" />
             )}
