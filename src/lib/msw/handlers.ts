@@ -3,8 +3,18 @@ import { Order } from "@/services/api";
 import { padLeft } from "@/utils";
 import { delay, http, HttpResponse } from "msw";
 
-// In-memory store to hold order data
-const orderStore: Record<string, Order> = {};
+// Persistent store using localStorage
+const getOrderStore = (): Record<string, Order> => {
+  const storedData = localStorage.getItem("orderStore") || null;
+  return storedData ? JSON.parse(storedData) : {};
+};
+
+// Update localStorage whenever orderStore changes
+const updateStorage = (
+  newOrderStore: Record<string, Order> = getOrderStore()
+) => {
+  localStorage.setItem("orderStore", JSON.stringify(newOrderStore));
+};
 
 // Helper to resolve path
 const resolvePath = (path: string): string => `${appConfig.baseUrl}${path}`;
@@ -16,6 +26,20 @@ const genRandomFullName = (): string => {
   const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
   const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
   return `${firstName} ${lastName}`;
+};
+
+const genOrders = (limit: number, page: number): Order[] => {
+  return new Array(limit).fill(null).map((_, index) => {
+    const id = padLeft(page + index + 1);
+
+    return {
+      id,
+      customerName: genRandomFullName(),
+      date: new Date().toISOString(),
+      status: "Pending",
+      totalAmount: 100 * Math.random() * (index + page + 1),
+    };
+  });
 };
 
 export const handlers = [
@@ -31,19 +55,23 @@ export const handlers = [
         const limit = parseInt(url.searchParams.get("limit") as string);
         const page = parseInt(url.searchParams.get("page") as string);
 
-        const orders: Order[] = new Array(limit).fill(null).map((_, index) => {
-          const id = padLeft(page + index + 1);
-          if (!orderStore[id]) {
-            orderStore[id] = {
-              id,
-              customerName: genRandomFullName(),
-              date: new Date().toISOString(),
-              status: "Pending",
-              totalAmount: 100 * Math.random() * (index + page + 1),
-            };
-          }
-          return orderStore[id];
-        });
+        const orderStore = getOrderStore();
+        const storedOrders = Object.values(orderStore);
+
+        let orders: Order[] = [];
+
+        if (storedOrders.length > 0) {
+          orders = storedOrders;
+        } else {
+          orders = genOrders(limit, page);
+
+          updateStorage(
+            orders.reduce<Record<string, Order>>((acc, order) => {
+              acc[order.id] = order;
+              return acc;
+            }, {})
+          );
+        }
 
         return HttpResponse.json({
           orders,
@@ -60,6 +88,7 @@ export const handlers = [
     async ({ params }) => {
       try {
         const id = params.id as string;
+        const orderStore = getOrderStore();
         const order = orderStore[id];
         if (!order) {
           return new HttpResponse(
@@ -82,9 +111,11 @@ export const handlers = [
       try {
         const body = await request.json();
         const { id, ...order } = body as Order;
+        const orderStore = getOrderStore();
 
         if (orderStore[id]) {
           orderStore[id] = { id, ...order };
+          updateStorage(orderStore);
         } else {
           return new HttpResponse(
             JSON.stringify({ error: "Order not found" }),
@@ -106,8 +137,10 @@ export const handlers = [
     async ({ params }) => {
       try {
         const id = params.id as string;
+        const orderStore = getOrderStore();
         if (id && orderStore[id]) {
           delete orderStore[id];
+          updateStorage(orderStore);
           return HttpResponse.json({ id });
         }
         return new HttpResponse(JSON.stringify({ error: "Order not found" }), {

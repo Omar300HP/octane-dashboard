@@ -40,33 +40,8 @@ export const orderExtendedApi = baseApi.injectEndpoints({
       query: (params: DeleteOrderReqParams) =>
         queryDefinitions.deleteOrder(params),
 
-      async onQueryStarted({ orderId }, { dispatch, queryFulfilled }) {
-        try {
-          await queryFulfilled;
-          dispatch(
-            orderExtendedApi.util.updateQueryData(
-              "getOrderList",
-              { page: 0, limit: 100 },
-              (draft: GetOrderListRes) => {
-                const orderIndex = draft.orders.findIndex(
-                  (order) => order.id === orderId
-                );
-                console.log({
-                  orderIndex,
-                  filter: draft.orders.filter((order) => order.id !== orderId),
-                });
-                if (orderIndex >= 0) {
-                  draft.orders = draft.orders.filter(
-                    (order) => order.id !== orderId
-                  );
-                }
-              }
-            )
-          );
-        } catch (error) {
-          console.error("Failed to delete order:", error);
-        }
-      },
+      invalidatesTags: (_, error, { orderId }) =>
+        error ? [] : [{ type: "orders" }, { type: "order", id: orderId }],
     }),
 
     updateOrder: builder.mutation<
@@ -76,27 +51,8 @@ export const orderExtendedApi = baseApi.injectEndpoints({
       query: ({ reqBody }: { reqBody: UpdateOrderReqBody }) =>
         queryDefinitions.updateOrder(reqBody),
 
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
-        try {
-          const { data: updatedOrder } = await queryFulfilled;
-          dispatch(
-            orderExtendedApi.util.updateQueryData(
-              "getOrderList",
-              { page: 0, limit: 100 },
-              (draft: GetOrderListRes) => {
-                const orderIndex = draft.orders.findIndex(
-                  (order) => order.id === updatedOrder.id
-                );
-                if (orderIndex >= 0) {
-                  Object.assign(draft.orders[orderIndex], updatedOrder);
-                }
-              }
-            )
-          );
-        } catch (error) {
-          console.error("Failed to update order:", error);
-        }
-      },
+      invalidatesTags: (order, error) =>
+        error ? [] : [{ type: "orders" }, { type: "order", id: order?.id }],
     }),
   }),
 
