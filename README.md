@@ -76,3 +76,5 @@ http://localhost:3000
 ```
 
 ---
+
+I did not have time to finish the tests, stories and to integrate cypress for e2e testing. I will continue working on it and will update the repo with the missing parts.
